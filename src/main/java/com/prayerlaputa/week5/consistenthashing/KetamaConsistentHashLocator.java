@@ -1,6 +1,7 @@
 package com.prayerlaputa.week5.consistenthashing;
 
 import java.util.Collection;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -37,37 +38,50 @@ public class KetamaConsistentHashLocator<T> {
         this.hashAlgo = hashAlgo;
         this.virtualNum = virtualNum;
 
+        /*
+        构造方法中直接创建出一致性哈希环
+         */
         for (T node : nodes) {
-            for (int i = 0; i < virtualNum; i++) {
-                long nodeKey = this.hashAlgo.hash(node.toString() + i);
-                nodeMap.put(nodeKey, node);
-            }
+            addNode(node);
         }
     }
 
+    public void addNode(T node) {
+        for (int i = 0; i < virtualNum; i++) {
+            nodeMap.put(hashAlgo.hash(node.toString() + i), node);
+        }
+    }
+
+    /**
+     *             if key不在nodeMap中
+     *                 按照顺时针方向找下一个元素。
+     *                 if 没有下一个元素
+     *                     则返回hash环中第一个元素
+     *             else
+     *                 直接返回查找到的元素即可
+     *
+     * @param key
+     * @return
+     */
     public T getNodeByKey(final String key) {
         if (nodeMap.isEmpty()) {
             return null;
         }
-        final Long hash = this.hashAlgo.hash(key);
-        Long target = hash;
+        Long target = this.hashAlgo.hash(key);
         if (!nodeMap.containsKey(target)) {
             /*
-            if key不在nodeMap中
-                按照顺时针方向找下一个元素。
-                if 没有下一个元素
-                    则返回hash环中第一个元素
-            else
-                直接返回元素即可
-
-
             此处通过使用TreeMap，将顺时针查找转换成查找下一个更大元素的操作。
-            注意：ceilingKey方法返回大于或等于给定键元素(ele)的下键元素，否则返回null。
-             */
+            一种写法：
             target = this.nodeMap.ceilingKey(target);
             if (null == target && !nodeMap.isEmpty()) {
                 target = nodeMap.firstKey();
             }
+            另一种写法：参考doris
+             SortedMap<Integer, Integer> tailMap = circle.tailMap(hash);
+	        target = tailMap.isEmpty() ? circle.firstKey() : tailMap.firstKey();
+             */
+            SortedMap<Long, T> tailMap = nodeMap.tailMap(target);
+            target = tailMap.isEmpty() ? nodeMap.firstKey() : tailMap.firstKey();
         }
 
         return nodeMap.get(target);

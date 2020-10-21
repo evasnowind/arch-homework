@@ -1,9 +1,11 @@
 package com.prayerlaputa.week5.consistenthashing;
 
+import com.sun.xml.internal.ws.api.Component;
+
 /**
  * 节点的IP实现
  */
-public class Node {
+public class Node implements Comparable {
 
     private String name;
 
@@ -68,5 +70,10 @@ public class Node {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (ip != null ? ip.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return ip.compareTo(((Node)o).getIp());
     }
 }
