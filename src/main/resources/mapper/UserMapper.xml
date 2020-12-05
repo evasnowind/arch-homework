@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.prayerlaputa.week11.encrpyt_password.mapper.UserMapper">
+
+    <resultMap id="baseResultMap" type="com.prayerlaputa.week11.encrpyt_password.model.UserInfo">
+        <id column="id" property="id" javaType="java.lang.Long" jdbcType="INTEGER"></id>
+        <result column="username" property="username" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+        <result column="passwd" property="passwd" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="select" resultType="com.prayerlaputa.week11.encrpyt_password.model.UserInfo">
+        SELECT *
+        FROM user_info
+        WHERE username = #{username}
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.prayerlaputa.week11.encrpyt_password.model.UserInfo">
+        INSERT INTO user_info (username, passwd) VALUES (#{username}, #{passwd});
+    </insert>
+</mapper>
