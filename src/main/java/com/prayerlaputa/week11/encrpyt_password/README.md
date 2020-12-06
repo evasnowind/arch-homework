@@ -8,7 +8,7 @@
 
 上述引自极客时间 java业务开发常见错误100例 “30 | 如何正确保存和传输敏感数据？”。
 
-目前来将，使用BCryptPasswordEncoder对密码加密更加安全。本周作业题目我就采用了这个方案。  
+目前来讲，使用BCryptPasswordEncoder对密码加密更加安全。本周作业题目我就采用了这个方案。  
 
 - 设计了两个接口（按道理注册、登录接口肯定需要使用POST, 但此处为方便测试，都设计成了GET接口）
     - /api/user/reg: 注册新用户，需传入用户名、密码
@@ -17,3 +17,9 @@
         - 具体校验接口在UserService#checkPW(String username, String rawPassword, String encodedPassword) 方法中
         - 示例：http://localhost:8090/api/user/login?username=ccc&passwd=123454
        
+       
+## 程序运行说明  
+
+1. 先在本地或是你方便的环境执行resources/db/user.sql，创建user_db数据库，并在该库中创建一个user_info表，保证用户名、加密后的密码  
+2. 修改application.yml中的数据库连接，连到你的数据库，然后启动UserApplication
+3. 按上述接口说明，先访问localhost:8090/api/user/reg接口，注册一个用户，然后再调用localhost:8090/api/user/login进行登录验证即可
